@@ -1,0 +1,150 @@
+################################################################################
+#
+#  For CPU Measurement
+#  New Measurement Name :: downsampled_cpu
+#
+#  GROUPED BY :: host & time(20m)
+#
+################################################################################
+
+
+CREATE CONTINUOUS QUERY cq_20m_cpu ON telegraf 
+	BEGIN
+		SELECT
+			MEAN(usage_idle) AS mean_idle,
+			MEAN(usage_guest) AS mean_guest,
+			MEAN(usage_guest_nice) AS mean_guest_nice,
+			MEAN(usage_iowait) AS mean_iowait,
+			MEAN(usage_irq) AS mean_irq,
+			MEAN(usage_nice) AS mean_nice	,
+			MEAN(usage_softirq) AS mean_softirq,
+			MEAN(usage_steal) AS mean_steal,
+			MEAN(usage_system) AS mean_system,
+			MEAN(usage_user) AS mean_user,
+
+			MIN(usage_idle) AS min_idle,
+			MIN(usage_guest) AS min_guest,
+			MIN(usage_guest_nice) AS min_guest_nice,
+			MIN(usage_iowait) AS min_iowait,
+			MIN(usage_irq) AS min_irq,
+			MIN(usage_nice) AS min_nice	,
+			MIN(usage_softirq) AS min_softirq,
+			MIN(usage_steal) AS min_steal,
+			MIN(usage_system) AS min_system,
+			MIN(usage_user) AS min_user,
+
+			MAX(usage_idle) AS max_idle,
+			MAX(usage_guest) AS max_guest,
+			MAX(usage_guest_nice) AS max_guest_nice,
+			MAX(usage_iowait) AS max_iowait,
+			MAX(usage_irq) AS max_irq,
+			MAX(usage_nice) AS max_nice	,
+			MAX(usage_softirq) AS max_softirq,
+			MAX(usage_steal) AS max_steal,
+			MAX(usage_system) AS max_system,
+			MAX(usage_user) AS max_user
+
+		INTO
+			telegraf."default".downsampled_cpu
+		FROM cpu
+		GROUP BY time(20m),
+				 host
+	END
+
+
+################################################################################
+#
+#  For MEM Measurement
+#  New Measurement Name :: downsampled_mem
+#
+#  GROUPED BY :: host & time(20m)
+#
+################################################################################
+
+
+CREATE CONTINUOUS QUERY cq_20m_mem ON telegraf 
+	BEGIN
+		SELECT
+			MEAN(available) AS mean_available,
+			MEAN(available_percent) AS mean_available_percent,
+			MEAN(buffered) AS mean_buffered,
+			MEAN(cached) AS mean_cached,
+			MEAN(free) AS mean_free,
+			MEAN(total) AS mean_total,
+			MEAN(used) AS mean_used,
+			MEAN(used_percent) AS mean_used_percent,
+
+			MAX(available) AS min_available,
+			MAX(available_percent) AS min_available_percent,
+			MAX(buffered) AS min_bufferedv,
+			MAX(cached) AS min_cached,
+			MAX(free) AS min_free,
+			MAX(total) AS min_total,
+			MAX(used) AS min_used,
+			MAX(used_percent) AS min_used_percent,
+
+
+			MIN(available) AS max_available,
+			MIN(available_percent) AS max_available_percent,
+			MIN(buffered) AS max_buffered,
+			MIN(cached) AS max_cached,
+			MIN(free) AS max_free,
+			MIN(total) AS max_total,
+			MIN(used) AS max_used,
+			MIN(used_percent) AS max_used_percent
+
+		INTO
+			telegraf."default".downsampled_mem
+		FROM mem
+		GROUP BY time(20m),
+				 host
+	END
+
+
+################################################################################
+#
+#  For DISK Measurement
+#  New Measurement Name :: downsampled_disk
+#
+#  GROUPED BY :: host, time(20m), path, fstype
+#
+################################################################################
+
+
+CREATE CONTINUOUS QUERY cq_20m_disk ON telegraf 
+	BEGIN
+		SELECT
+
+			MEAN(free) AS mean_free,
+			MEAN(inodes_free) AS mean_inodes_free,
+			MEAN(inodes_total) AS mean_inodes_total,
+			MEAN(inodes_used) AS mean_inodes_used,
+			MEAN(total) AS mean_total,
+			MEAN(used) AS mean_used,
+			MEAN(used_percent) AS mean_used_percent,
+
+			MAX(free) AS max_free,
+			MAX(inodes_free) AS max_inodes_free,
+			MAX(inodes_total) AS max_inodes_total,
+			MAX(inodes_used) AS max_inodes_used,
+			MAX(total) AS max_total,
+			MAX(used) AS max_used,
+			MAX(used_percent) AS max_used_percent,
+
+			MIN(free) AS min_free,
+			MIN(inodes_free) AS min_inodes_free,
+			MIN(inodes_total) AS min_inodes_total,
+			MIN(inodes_used) AS min_inodes_used,
+			MIN(total) AS min_total,
+			MIN(used) AS min_used,
+			MIN(used_percent) AS min_used_percent
+
+
+		INTO
+			telegraf."default".downsampled_disk
+		FROM disk
+		GROUP BY time(20m),
+				 host,
+				 path,
+				 fstype
+	END
